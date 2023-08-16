@@ -14,7 +14,7 @@ if uploaded_file is not None:
     numerical = df.dtypes[df.dtypes == 'int64'] + df.dtypes[df.dtypes == 'float64']
 
     dropdown_1 = st.selectbox(
-        'First column',
+        'First column for visualisation',
         (df.columns.tolist()))
 
     if dropdown_1 in numerical:
@@ -25,7 +25,7 @@ if uploaded_file is not None:
     st.plotly_chart(fig1, use_container_width=True)
 
     dropdown_2 = st.selectbox(
-        'Second column',
+        'Second column for visualisation',
         (df.columns.tolist()))
 
     if dropdown_2 in numerical:
@@ -45,7 +45,6 @@ if uploaded_file is not None:
     )
 
     categor = []
-    st.write(type(df.columns.values.tolist()))
     for i in df.columns.values.tolist():
         if i in numerical:
             continue
@@ -65,21 +64,21 @@ if uploaded_file is not None:
     if len(categor_perem) == 2:
         value_dropdown = st.selectbox(
             f'Select the column by which to compare {categor_perem[0]} and {categor_perem[1]}',
-            [col for col in df if isinstance(df[col][0], int) or isinstance(df[col][0], float)],
-            key='1'
+            [column for column in df if isinstance(df[column][0], int) or isinstance(df[column][0], float)], key='1'
         )
-        data_1, data_2 = df[df[categor_column] == categor_perem[0]][value_dropdown], df[df[categor_column] == categor_perem[1]][value_dropdown]
 
         if testing_dd == testing_methods[0]:
             st.write('Select testing method')
         elif testing_dd == testing_methods[1]:
             res = stats.ttest_ind(
-                data_1, data_2,
+                df[df[categor_column] == categor_perem[0]][value_dropdown],
+                df[df[categor_column] == categor_perem[1]][value_dropdown],
                 equal_var=False
             )
             st.write(f'P value: {res.pvalue}')
         elif testing_dd == testing_methods[2]:
             res = stats.mannwhitneyu(
-                data_1, data_2
+                df[df[categor_column] == categor_perem[0]][value_dropdown],
+                df[df[categor_column] == categor_perem[1]][value_dropdown]
             )
             st.write(f'P value: {res.pvalue}')
